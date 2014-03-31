@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PostgreSQL</title>
+</head>
+<body>
+    <h1>PostgreSQL</h1>
+    <p>Assignment 1</p>
+    <p>
+        <a href="javascript:cmd1();">cmd1</a><br>
+        <a href="javascript:cmd2();">cmd2</a><br>
+    </p>
+    <table>
+        <tbody id="tbody"></tbody>
+    </table>
+</body>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    var socket = io.connect();
+    socket.on('response', function (data) {
+        console.log("response incoming");
+        var resHtml = "";
+        for (var r in data.cmd1) {
+            // console.log(r);
+            resHtml += "<tr>";
+            for (var c in data.cmd1[r]) {
+                resHtml += "<td>"+data.cmd1[r][c]+"</td>";
+            }
+            resHtml += "</tr>";
+        }
+        document.getElementById('tbody').innerHTML = resHtml;
+    });
+
+    function cmd1() { socket.emit('cmd', { cmd: "cmd1" });}
+    function cmd2() { socket.emit('cmd', { cmd: "cmd2" }); }
+
+    socket.on('connect', function (data) {
+        cmd1();
+    })
+</script>
+</html>
