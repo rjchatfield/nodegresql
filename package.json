@@ -1,0 +1,17 @@
+{
+  "name": "nodegresql",
+  "description": "Sample Node.js, PostgreSQL and Socket.io project",
+  "author": "Robert j Chatfield <rjchatfield@gmail.com>",
+  "repository" : {
+    "type" : "git",
+    "url" : "https://github.com/rjchatfield/nodegresql.git"
+  },
+  "dependencies": {
+    "pg": "2.x.x",
+    "socket.io": "0.x.x"
+  },
+  "engine": {
+    "node": "0.10.x",
+    "npm": "1.x"
+  }
+}
