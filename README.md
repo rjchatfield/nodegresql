@@ -6,8 +6,10 @@ Sample Node.js, PostgreSQL and Socket.io project
 ## Installation
 
 Default code will talk to PostgreSQL database named "playful". In psql:
-```
 
+```
+create database playful;
+\c playful
 ```
 
 Populate "playful" with `server_populate.js`.
