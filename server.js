@@ -19,49 +19,59 @@ function handler (req, res) {
 
 //-- POSTGRESQL CONNECTION
 var pg = require('pg');
-
+var DATABASE_NAME = "playful",
+    DATABASE_PATH = "localhost:5432/";
 
 io.sockets.on('connection', function (socket) {
 
-    var conString = "postgres://smiley@localhost:5432/playful";
-    var client = new pg.Client(conString);
-    client.connect();
+    var dbUsername = "";
+    var client = null;// = new pg.Client(conString);
 
-    // function connect(user) {
-    //     conString = "postgres://" + user + "@localhost:5432/playful";
-    //     client = new pg.Client(conString);
-    // }
+    function connectClient() {
+        if (client) disconnectClient();
+        console.log("Connecting as " + dbUsername + "...");
+        if (dbUsername != "") dbUsername += "@";      // admin@
+        conString = "postgres://" + dbUsername + DATABASE_PATH + DATABASE_NAME;
+        client = new pg.Client(conString);
+        client.connect();
+    }
+
+    function disconnectClient() {
+        if (client) {
+            console.log("disconnecting...");
+            client.end();
+            client = null;
+        }
+    }
 
     function run(query, callback) {
         var r = [];
 
+        connectClient();
         var q = client.query(query);
 
         q.on('row', function(row) { r.push(row); });
-        q.on('end', function()    { callback(r); });
-    }
-
-    function resFunc(res) {
-        socket.emit('response', { cmd1: res });
-    }
-
-    function disconnectClient() {
-        console.log("disconnecting...");
-        client.end();
-        client = null;
-    }
-
-    socket.on('cmd', function (data) {
-        console.log("cmd: " + data.cmd);
-        if (data.cmd == "cmd1") {
-            run("SELECT * FROM junk", resFunc);
-        }
-        else if (data.cmd == "cmd2") {
-            run("SELECT * FROM beatles", resFunc);
-        }
-        else if (data.cmd == "client_end") {
+        q.on('end', function()    {
+            callback(r);
             disconnectClient();
+        });
+    }
+
+    function emitResponse(res) {
+        if (res !== undefined) socket.emit('response', res);
+    }
+
+    socket.on('cmd', function(data) {
+        console.log("cmd: " + data);
+        switch (data) {
+            case 1:     run("SELECT * FROM junk",    emitResponse);  break;
+            case 2:     run("SELECT * FROM beatles", emitResponse);  break;
         }
+    });
+
+    socket.on('manual_query', function(data) {
+        console.log("manual_query: " + data);
+        run(data, emitResponse);
     });
 
     socket.on('disconnect', disconnectClient);
