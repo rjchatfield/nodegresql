@@ -1,4 +1,5 @@
 //-- SOCKET.IO FILE SERVER
+// https://gist.github.com/rpflorence/701407
 var app = require("http").createServer(handler),
     url = require("url"),
     path = require("path"),
@@ -57,7 +58,11 @@ io.sockets.on('connection', function (socket) {
         if (dbUsername != "") dbUsername += "@";      // admin@
         conString = "postgres://" + dbUsername + DATABASE_PATH + DATABASE_NAME;
         client = new pg.Client(conString);
-        client.connect();
+        client.connect(function(err) {
+            if(err) {
+                return console.error('POSTGRESQL: could not connect to postgres', err);
+            }
+        });
     }
 
     function disconnectClient() {
@@ -72,7 +77,11 @@ io.sockets.on('connection', function (socket) {
         var r = [];
 
         connectClient();
-        var q = client.query(query);
+        var q = client.query(query, function(err) {
+            if(err) {
+                return console.error('POSTGRESQL: could not complete query', err);
+            }
+        });
 
         q.on('row', function(row) { r.push(row); });
         q.on('end', function()    {
