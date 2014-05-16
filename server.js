@@ -1,24 +1,48 @@
 //-- SOCKET.IO FILE SERVER
-var app = require('http').createServer(handler),
-    io  = require('socket.io').listen(app),
-    fs  = require('fs');
+var app = require("http").createServer(handler),
+    url = require("url"),
+    path = require("path"),
+    fs = require("fs")
+    port = process.argv[2] || 8080;
 
-app.listen(8080);
+app.listen(parseInt(port, 10));
 
-function handler (req, res) {
-    fs.readFile(__dirname + '/index.html', function (err, data) {
-        if (err) {
-            res.writeHead(500);
-            return res.end('Error loading index.html');
-        }
+function handler (request, response) {
 
-        res.writeHead(200);
-        res.end(data);
+  var uri = url.parse(request.url).pathname
+    , filename = path.join(process.cwd(), uri);
+
+  path.exists(filename, function(exists) {
+    if(!exists) {
+      response.writeHead(404, {"Content-Type": "text/plain"});
+      response.write("404 Not Found\n");
+      response.end();
+      return;
+    }
+
+    if (fs.statSync(filename).isDirectory()) filename += '/index.html';
+
+    fs.readFile(filename, "binary", function(err, file) {
+      if(err) {
+        response.writeHead(500, {"Content-Type": "text/plain"});
+        response.write(err + "\n");
+        response.end();
+        return;
+      }
+
+      response.writeHead(200);
+      response.write(file, "binary");
+      response.end();
     });
+  });
 }
 
+console.log("Static file server running at\n  => http://localhost:" + port + "/\nCTRL + C to shutdown\n");
+
+
 //-- POSTGRESQL CONNECTION
-var pg = require('pg');
+var pg = require('pg'),
+    io = require('socket.io').listen(app);
 var DATABASE_NAME = "playful",
     DATABASE_PATH = "localhost:5432/";
 
