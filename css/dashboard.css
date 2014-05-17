@@ -42,11 +42,13 @@
   margin-bottom: 20px;
   margin-left: -20px;
 }
-.nav-sidebar > li > a {
+.nav-sidebar > li > a,
+.nav-sidebar > li > p {
   padding-right: 20px;
   padding-left: 20px;
 }
-.nav-sidebar > .active > a {
+.nav-sidebar > .active > a,
+.nav-sidebar > .active > a:hover {
   color: #fff;
   background-color: #428bca;
 }
