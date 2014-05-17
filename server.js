@@ -90,21 +90,40 @@ io.sockets.on('connection', function (socket) {
         });
     }
 
-    function emitResponse(res) {
-        if (res !== undefined) socket.emit('response', res);
+    function emitResponse(page_title, table_title, queryResults) {
+        if (queryResults !== undefined) {
+            socket.emit('response', {
+                "page_title": page_title,
+                "table_title": table_title,
+                "queryResults": queryResults
+            });
+        }
     }
 
     socket.on('cmd', function(data) {
         console.log("cmd: " + data);
         switch (data) {
-            case 1:     run("SELECT * FROM junk",    emitResponse);  break;
-            case 2:     run("SELECT * FROM beatles", emitResponse);  break;
+            case 0:
+                emitResponse("Welcome to AccountgresSQL", "Select a function from the side bar", {});
+                break;
+            case 1:
+                run("SELECT * FROM junk", function(res){
+                    emitResponse("Command 1", "SELECT * FROM junk", res);
+                });
+                break;
+            case 2:
+                run("SELECT * FROM beatles", function(res){
+                    emitResponse("Command 2", "SELECT * FROM beatles", res)
+                });
+                break;
         }
     });
 
     socket.on('manual_query', function(data) {
         console.log("manual_query: " + data);
-        run(data, emitResponse);
+        run(data, function(res){
+            emitResponse("Custom Query", data, res);
+        });
     });
 
     socket.on('disconnect', disconnectClient);

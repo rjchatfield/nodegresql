@@ -12,17 +12,17 @@
         <div class="row">
             <div class="col-sm-3 col-md-2 sidebar">
                 <ul class="nav nav-sidebar">
-                    <li><p>Commands</p></li>
-                    <li id="cmd1"><a href="javascript:cmd(1);">cmd1</a></li>
-                    <li id="cmd2"><a href="javascript:cmd(2);">cmd2</a></li>
+                    <li id="cmd0"><a href="javascript:cmd(0);">Home</a></li>
                 </ul>
                 <ul class="nav nav-sidebar">
-                    <li><a href="#">Nav item</a></li>
+                    <li><p>Functions</p></li>
+                    <li id="cmd1"><a href="javascript:cmd(1);">cmd1</a></li>
+                    <li id="cmd2"><a href="javascript:cmd(2);">cmd2</a></li>
                 </ul>
             </div>
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
-                <h1 class="page-header">App Heading</h1>
+                <h1 id="page_title" class="page-header">App Heading</h1>
 
                 <div class="row">
                     <ul class="nav nav-pills">
@@ -37,7 +37,7 @@
                     <a href="javascript:manual_query();">Submit</a>
                 </div>
 
-                <h2 class="sub-header" id="table_header">Table Header</h2>
+                <h2 class="sub-header" id="table_title">Table Header</h2>
                 <div class="table-responsive">
                     <table id="tbody" class="table table-striped">
                         <thead>
@@ -191,6 +191,7 @@
         function manual_query() {
             var query = document.getElementById('manual_query').value;
             socket.emit('manual_query', query);
+            $(".sidebar .active").removeClass("active");
         }
         function tablify_data(data) {
             var resHtml = "";
@@ -214,11 +215,13 @@
         //- Socket.io Responses
         socket.on('response', function (data) {
             console.log("response incoming: " + JSON.stringify(data, null, 4));
-            tablify_data(data);
+            $("#page_title").text(data.page_title);
+            $("#table_title").text(data.table_title);
+            tablify_data(data.queryResults);
         });
 
         //- Let's get this party started
-        cmd(1);
+        cmd(0);
     </script>
 
 </body>
