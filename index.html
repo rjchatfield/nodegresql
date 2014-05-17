@@ -23,7 +23,7 @@
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
                 <h1 id="page_title" class="page-header">App Heading</h1>
-
+<!--
                 <div class="row">
                     <ul class="nav nav-pills">
                         <li class="active"><a href="#">Home</a></li>
@@ -31,10 +31,16 @@
                         <li><a href="#">Contact</a></li>
                     </ul>
                 </div>
-
+ -->
                 <div class="row">
-                    <input type="text" class="form-control" id="manual_query">
-                    <a href="javascript:manual_query();">Submit</a>
+                <div class="col-sm-9 col-md-10">
+                    <input type="text" class="form-control" id="manual_query" placeholder="Enter custom query">
+                </div>
+                <div class="col-sm-3 col-md-2">
+                    <button type="button" class="btn btn-default" onclick="manual_query();">
+                        <span class="glyphicon glyphicon-search"></span> Query
+                    </button>
+                </div>
                 </div>
 
                 <h2 class="sub-header" id="table_title">Table Header</h2>
