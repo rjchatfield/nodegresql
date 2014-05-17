@@ -192,10 +192,7 @@
             var query = document.getElementById('manual_query').value;
             socket.emit('manual_query', query);
         }
-
-        //- Socket.io Responses
-        socket.on('response', function (data) {
-            console.log("response incoming: " + JSON.stringify(data, null, 4));
+        function tablify_data(data) {
             var resHtml = "";
 
             //-- HEADER ROW TITLES
@@ -212,6 +209,12 @@
                 resHtml += "</tr>";
             }
             document.getElementById('tbody').innerHTML = resHtml;
+        }
+
+        //- Socket.io Responses
+        socket.on('response', function (data) {
+            console.log("response incoming: " + JSON.stringify(data, null, 4));
+            tablify_data(data);
         });
 
         //- Let's get this party started
