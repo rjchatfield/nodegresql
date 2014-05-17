@@ -209,8 +209,8 @@
 
 
     <!-- SCRIPTS -->
-    <script src="js/bootstrap.min.js"></script>
     <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script>
         var socket = io.connect();
@@ -224,8 +224,16 @@
 
         //- Socket.io Responses
         socket.on('response', function (data) {
-            console.log("response incoming");
+            console.log("response incoming: " + JSON.stringify(data, null, 4));
             var resHtml = "";
+
+            //-- HEADER ROW TITLES
+            resHtml += "<thead><tr>";
+            for (var h in data[0])
+                resHtml += "<th>" + h + "</th>";
+            resHtml += "</thead></tr>";
+
+            //-- TABLE DATA
             for (var r in data) {
                 resHtml += "<tr>";
                 for (var c in data[r])
